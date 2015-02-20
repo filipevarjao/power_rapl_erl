@@ -1,5 +1,6 @@
 /* eprof.c                                                            */
-/* by Filipe Varjão -- varjaofilipe @ gmail.com, frgv @ cin.ufpe.br   */
+/* by Filipe Varjão -- varjaofilipe @ gmail.com                       */
+/*                                                                    */
 /* Read the RAPL registers on a sandybridge-ep machine                */
 /* Code based on Intel RAPL driver by Zhang Rui <rui.zhang@intel.com> */
 /*                                                                    */
@@ -340,47 +341,26 @@ int main(int argc, char **argv) {
 }
 
   /* NIF library code */
-static ERL_NIF_TERM start_read_rapl(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
-{
-  long long initial_energy_status;
-  double energy_units;
-  double pb; // package_before
-  int file_descriptor;
-  char initial_power_consumption[50];
-
-  file_descriptor = open_msr(0);
-  initial_energy_status=read_msr(file_descriptor, MSR_RAPL_POWER_UNIT);
-  energy_units=pow(0.5,(double)((initial_energy_status>>8)&0x1f));
-
-  initial_energy_status = read_msr(file_descriptor,MSR_PKG_ENERGY_STATUS);
-  pb = (double)initial_energy_status*energy_units;
-  // printf("Energy consumption before: %.6fJ\n",pb);
-  // return enif_make_int(env, ret);
-  sprintf(initial_power_consumption, "%0.6f", pb);
-  return enif_make_string(env, initial_power_consumption, ERL_NIF_LATIN1);
-}
-
 static ERL_NIF_TERM read_rapl(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-  long long energy_status;
-  double energy_units;
-  double pa; // package_after
-  int file_descriptor;
-  char power_consumption[50];
+    long long energy_status;
+    double energy_units;
+    double pa; // package_after
+    int file_descriptor;
+    char power_consumption[50];
 
-  file_descriptor = open_msr(0);
-  energy_status=read_msr(file_descriptor, MSR_RAPL_POWER_UNIT);
-  energy_units=pow(0.5,(double)((energy_status>>8)&0x1f));
+    file_descriptor = open_msr(0);
+    energy_status=read_msr(file_descriptor, MSR_RAPL_POWER_UNIT);
+    energy_units=pow(0.5,(double)((energy_status>>8)&0x1f));
 
-  energy_status = read_msr(file_descriptor,MSR_PKG_ENERGY_STATUS);
-  pa = (double)energy_status*energy_units;
-  sprintf(power_consumption, "%0.6f", pa);
-  return enif_make_string(env, power_consumption, ERL_NIF_LATIN1);
+    energy_status = read_msr(file_descriptor,MSR_PKG_ENERGY_STATUS);
+    pa = (double)energy_status*energy_units;
+    sprintf(power_consumption, "%0.6f", pa);
+    return enif_make_string(env, power_consumption, ERL_NIF_LATIN1);
 }
 
 static ErlNifFunc nif_funcs[] = {
-  {"start_rapl", 0, start_read_rapl},
-  {"read_rapl", 0, start_read_rapl}
+    {"read_rapl", 0, read_rapl}
 };
 
 ERL_NIF_INIT(rapl_nif, nif_funcs, NULL, NULL, NULL, NULL)
