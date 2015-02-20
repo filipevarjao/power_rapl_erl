@@ -16,6 +16,7 @@
 /* Additional contributions by:                                       */
 /*   Romain Dolbeau -- romain @ dolbeau.org                           */
 /* http://web.eece.maine.edu/~vweaver/projects/rapl/rapl-read.c */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -343,24 +344,24 @@ int main(int argc, char **argv) {
   /* NIF library code */
 static ERL_NIF_TERM read_rapl(ErlNifEnv* env, int argc, const ERL_NIF_TERM argv[])
 {
-    long long energy_status;
-    double energy_units;
-    double pa; // package_after
-    int file_descriptor;
-    char power_consumption[50];
+  long long energy_status;
+  double energy_units;
+  double package;
+  int file_descriptor;
+  char power_consumption[50];
 
-    file_descriptor = open_msr(0);
-    energy_status=read_msr(file_descriptor, MSR_RAPL_POWER_UNIT);
-    energy_units=pow(0.5,(double)((energy_status>>8)&0x1f));
+  file_descriptor = open_msr(0);
+  energy_status=read_msr(file_descriptor, MSR_RAPL_POWER_UNIT);
+  energy_units=pow(0.5,(double)((energy_status>>8)&0x1f));
 
-    energy_status = read_msr(file_descriptor,MSR_PKG_ENERGY_STATUS);
-    pa = (double)energy_status*energy_units;
-    sprintf(power_consumption, "%0.6f", pa);
-    return enif_make_string(env, power_consumption, ERL_NIF_LATIN1);
+  energy_status = read_msr(file_descriptor,MSR_PKG_ENERGY_STATUS);
+  package = (double)energy_status*energy_units;
+  sprintf(power_consumption, "%0.6f", package);
+  return enif_make_string(env, power_consumption, ERL_NIF_LATIN1);
 }
 
 static ErlNifFunc nif_funcs[] = {
-    {"read_rapl", 0, read_rapl}
+  {"read_rapl", 0, read_rapl}
 };
 
 ERL_NIF_INIT(rapl_nif, nif_funcs, NULL, NULL, NULL, NULL)
