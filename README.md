@@ -2,7 +2,7 @@
 
 ================================
 
-`power_rapl_erl` is a tool to provide the profiling energy comsumption for `Erlang` and `Elixir`. power_rapl_erl use Inte's RAPL (Running Average Power Limit) interface to indicate the amount of energy comsumed.
+`power_rapl_erl` is a tool to provide the profiling energy comsumption for `Erlang` and `Elixir`for the whole CPU. power_rapl_erl use Inte's RAPL (Running Average Power Limit) interface to indicate the amount of energy comsumed.
 
 
 ### How to build `power_rapl_erl`
