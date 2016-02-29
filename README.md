@@ -25,6 +25,7 @@
 
             $ ls /dev/cpu/0/msr
 
+
             If this directory does not exist. You can load the “msr” module by the following command:
 
             $ sudo modprobe msr
